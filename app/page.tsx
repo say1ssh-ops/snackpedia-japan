@@ -4,6 +4,8 @@ import Link from "next/link";
 type Maker = { id: number; name: string };
 type Category = { id: number; name: string };
 
+type RelatedName = { name: string } | { name: string }[] | null;
+
 type Product = {
   id: number;
   name: string;
@@ -12,9 +14,15 @@ type Product = {
   description: string | null;
   maker_id: number | null;
   category_id: number | null;
-  makers: { name: string } | null;
-  categories: { name: string } | null;
+  makers: RelatedName;
+  categories: RelatedName;
 };
+
+function getRelatedName(value: RelatedName) {
+  if (!value) return "-";
+  if (Array.isArray(value)) return value[0]?.name ?? "-";
+  return value.name ?? "-";
+}
 
 export default async function Home({
   searchParams,
@@ -129,7 +137,7 @@ export default async function Home({
           >
             <h2>メーカーから探す</h2>
 
-            {makers?.map((maker) => {
+            {makers?.map((maker: Maker) => {
               const selected = makerId === String(maker.id);
 
               return (
@@ -163,7 +171,7 @@ export default async function Home({
           >
             <h2>カテゴリーから探す</h2>
 
-            {categories?.map((category) => {
+            {categories?.map((category: Category) => {
               const selected = categoryId === String(category.id);
 
               return (
@@ -206,7 +214,7 @@ export default async function Home({
               gap: "14px",
             }}
           >
-            {products?.map((product) => (
+            {(products as Product[] | null)?.map((product) => (
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
@@ -227,8 +235,8 @@ export default async function Home({
                       marginBottom: "8px",
                     }}
                   >
-                    🏭 {product.makers?.name ?? "-"} / 🍿{" "}
-                    {product.categories?.name ?? "-"}
+                    🏭 {getRelatedName(product.makers)} / 🍿{" "}
+                    {getRelatedName(product.categories)}
                   </div>
 
                   <strong>{product.name}</strong>
