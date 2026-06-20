@@ -31,27 +31,16 @@ export default async function Home({
   const makerId = params?.maker ?? "";
   const categoryId = params?.category ?? "";
 
-  const { data: makers } = await supabase
-    .from("makers")
-    .select("id, name")
-    .order("id");
-
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name")
-    .order("id");
+  const { data: makers } = await supabase.from("makers").select("id, name").order("id");
+  const { data: categories } = await supabase.from("categories").select("id, name").order("id");
 
   let productQuery = supabase
     .from("products")
-    .select(
-      "id, name, release_year, discontinued, description, maker_id, category_id, image_url"
-    )
+    .select("id, name, release_year, discontinued, description, maker_id, category_id, image_url")
     .order("id");
 
   if (q) {
-    productQuery = productQuery.or(
-      `name.ilike.%${q}%,description.ilike.%${q}%`
-    );
+    productQuery = productQuery.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
   }
 
   if (makerId) {
@@ -65,21 +54,12 @@ export default async function Home({
   const { data: products } = await productQuery;
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: "40px",
-        fontFamily: "sans-serif",
-        background: "#fff7ed",
-      }}
-    >
+    <main style={{ minHeight: "100vh", padding: "40px", fontFamily: "sans-serif", background: "#fff7ed" }}>
       <section style={{ maxWidth: "960px", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>
-          🍟 日本スナック図鑑 v0.10
-        </h1>
+        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>🍟 日本スナック図鑑 v0.12</h1>
 
         <p style={{ fontSize: "18px", color: "#555" }}>
-          商品画像対応版
+          選択中のメーカー・カテゴリーが色付きで表示されます。
         </p>
 
         <form>
@@ -97,117 +77,79 @@ export default async function Home({
             }}
           />
 
-          {makerId && (
-            <input type="hidden" name="maker" value={makerId} />
-          )}
-
-          {categoryId && (
-            <input type="hidden" name="category" value={categoryId} />
-          )}
+          {makerId && <input type="hidden" name="maker" value={makerId} />}
+          {categoryId && <input type="hidden" name="category" value={categoryId} />}
         </form>
 
         <div style={{ marginBottom: "20px" }}>
           <Link href="/">すべて表示</Link>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              padding: "24px",
-              borderRadius: "18px",
-            }}
-          >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
+          <div style={{ background: "white", padding: "24px", borderRadius: "18px" }}>
             <h2>メーカーから探す</h2>
 
-            {makers?.map((maker) => (
-              <Link
-                key={maker.id}
-                href={`/?maker=${maker.id}${
-                  categoryId ? `&category=${categoryId}` : ""
-                }`}
-                style={{
-                  display: "block",
-                  padding: "10px 0",
-                  borderBottom: "1px solid #eee",
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                🏭 {maker.name}
-              </Link>
-            ))}
+            {makers?.map((maker) => {
+              const selected = makerId === String(maker.id);
+
+              return (
+                <Link
+                  key={maker.id}
+                  href={`/?maker=${maker.id}${categoryId ? `&category=${categoryId}` : ""}`}
+                  style={{
+                    display: "block",
+                    padding: "10px 12px",
+                    marginBottom: "6px",
+                    borderRadius: "10px",
+                    border: selected ? "2px solid #f97316" : "1px solid #eee",
+                    background: selected ? "#ffedd5" : "white",
+                    fontWeight: selected ? "bold" : "normal",
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                >
+                  {selected ? "🟠" : "🏭"} {maker.name}
+                </Link>
+              );
+            })}
           </div>
 
-          <div
-            style={{
-              background: "white",
-              padding: "24px",
-              borderRadius: "18px",
-            }}
-          >
+          <div style={{ background: "white", padding: "24px", borderRadius: "18px" }}>
             <h2>カテゴリーから探す</h2>
 
-            {categories?.map((category) => (
-              <Link
-                key={category.id}
-                href={`/?category=${category.id}${
-                  makerId ? `&maker=${makerId}` : ""
-                }`}
-                style={{
-                  display: "block",
-                  padding: "10px 0",
-                  borderBottom: "1px solid #eee",
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                🍿 {category.name}
-              </Link>
-            ))}
+            {categories?.map((category) => {
+              const selected = categoryId === String(category.id);
+
+              return (
+                <Link
+                  key={category.id}
+                  href={`/?category=${category.id}${makerId ? `&maker=${makerId}` : ""}`}
+                  style={{
+                    display: "block",
+                    padding: "10px 12px",
+                    marginBottom: "6px",
+                    borderRadius: "10px",
+                    border: selected ? "2px solid #f97316" : "1px solid #eee",
+                    background: selected ? "#ffedd5" : "white",
+                    fontWeight: selected ? "bold" : "normal",
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                >
+                  {selected ? "🟠" : "🍿"} {category.name}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        <div
-          style={{
-            marginTop: "24px",
-            background: "white",
-            padding: "24px",
-            borderRadius: "18px",
-          }}
-        >
+        <div style={{ marginTop: "24px", background: "white", padding: "24px", borderRadius: "18px" }}>
           <h2>商品一覧</h2>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "14px",
-            }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
             {products?.map((product) => (
-              <Link
-                key={product.id}
-                href={`/products/${product.id}`}
-                style={{
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #eee",
-                    borderRadius: "14px",
-                    padding: "16px",
-                  }}
-                >
+              <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <div style={{ border: "1px solid #eee", borderRadius: "14px", padding: "16px" }}>
                   {product.image_url && (
                     <Image
                       src={product.image_url}
@@ -230,22 +172,11 @@ export default async function Home({
                     発売年：{product.release_year ?? "不明"}
                   </p>
 
-                  <p
-                    style={{
-                      margin: "8px 0",
-                      color: product.discontinued
-                        ? "#b91c1c"
-                        : "#166534",
-                    }}
-                  >
-                    {product.discontinued
-                      ? "終売"
-                      : "販売中"}
+                  <p style={{ margin: "8px 0", color: product.discontinued ? "#b91c1c" : "#166534" }}>
+                    {product.discontinued ? "終売" : "販売中"}
                   </p>
 
-                  <p style={{ color: "#555" }}>
-                    {product.description}
-                  </p>
+                  <p style={{ color: "#555" }}>{product.description}</p>
                 </div>
               </Link>
             ))}
