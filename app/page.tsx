@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import Image from "next/image";
 
 type Maker = { id: number; name: string };
 type Category = { id: number; name: string };
@@ -13,7 +12,8 @@ type Product = {
   description: string | null;
   maker_id: number | null;
   category_id: number | null;
-  image_url: string | null;
+  makers: { name: string } | null;
+  categories: { name: string } | null;
 };
 
 export default async function Home({
@@ -31,16 +31,35 @@ export default async function Home({
   const makerId = params?.maker ?? "";
   const categoryId = params?.category ?? "";
 
-  const { data: makers } = await supabase.from("makers").select("id, name").order("id");
-  const { data: categories } = await supabase.from("categories").select("id, name").order("id");
+  const { data: makers } = await supabase
+    .from("makers")
+    .select("id, name")
+    .order("id");
+
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("id");
 
   let productQuery = supabase
     .from("products")
-    .select("id, name, release_year, discontinued, description, maker_id, category_id, image_url")
+    .select(`
+      id,
+      name,
+      release_year,
+      discontinued,
+      description,
+      maker_id,
+      category_id,
+      makers(name),
+      categories(name)
+    `)
     .order("id");
 
   if (q) {
-    productQuery = productQuery.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+    productQuery = productQuery.or(
+      `name.ilike.%${q}%,description.ilike.%${q}%`
+    );
   }
 
   if (makerId) {
@@ -54,12 +73,21 @@ export default async function Home({
   const { data: products } = await productQuery;
 
   return (
-    <main style={{ minHeight: "100vh", padding: "40px", fontFamily: "sans-serif", background: "#fff7ed" }}>
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "40px",
+        fontFamily: "sans-serif",
+        background: "#fff7ed",
+      }}
+    >
       <section style={{ maxWidth: "960px", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>🍟 日本スナック図鑑 v0.12</h1>
+        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>
+          🍟 日本スナック図鑑
+        </h1>
 
         <p style={{ fontSize: "18px", color: "#555" }}>
-          選択中のメーカー・カテゴリーが色付きで表示されます。
+          日本のスナック菓子をメーカー別・カテゴリー別に探せる図鑑サイトです。
         </p>
 
         <form>
@@ -85,8 +113,20 @@ export default async function Home({
           <Link href="/">すべて表示</Link>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
-          <div style={{ background: "white", padding: "24px", borderRadius: "18px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "20px",
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: "24px",
+              borderRadius: "18px",
+            }}
+          >
             <h2>メーカーから探す</h2>
 
             {makers?.map((maker) => {
@@ -114,7 +154,13 @@ export default async function Home({
             })}
           </div>
 
-          <div style={{ background: "white", padding: "24px", borderRadius: "18px" }}>
+          <div
+            style={{
+              background: "white",
+              padding: "24px",
+              borderRadius: "18px",
+            }}
+          >
             <h2>カテゴリーから探す</h2>
 
             {categories?.map((category) => {
@@ -143,28 +189,47 @@ export default async function Home({
           </div>
         </div>
 
-        <div style={{ marginTop: "24px", background: "white", padding: "24px", borderRadius: "18px" }}>
+        <div
+          style={{
+            marginTop: "24px",
+            background: "white",
+            padding: "24px",
+            borderRadius: "18px",
+          }}
+        >
           <h2>商品一覧</h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "14px",
+            }}
+          >
             {products?.map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                <div style={{ border: "1px solid #eee", borderRadius: "14px", padding: "16px" }}>
-                  {product.image_url && (
-                    <Image
-                      src={product.image_url}
-                      alt={product.name}
-                      width={400}
-                      height={300}
-                      style={{
-                        width: "100%",
-                        height: "180px",
-                        objectFit: "cover",
-                        borderRadius: "10px",
-                        marginBottom: "12px",
-                      }}
-                    />
-                  )}
+              <Link
+                key={product.id}
+                href={`/products/${product.id}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #eee",
+                    borderRadius: "14px",
+                    padding: "16px",
+                    height: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#666",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    🏭 {product.makers?.name ?? "-"} / 🍿{" "}
+                    {product.categories?.name ?? "-"}
+                  </div>
 
                   <strong>{product.name}</strong>
 
@@ -172,7 +237,12 @@ export default async function Home({
                     発売年：{product.release_year ?? "不明"}
                   </p>
 
-                  <p style={{ margin: "8px 0", color: product.discontinued ? "#b91c1c" : "#166534" }}>
+                  <p
+                    style={{
+                      margin: "8px 0",
+                      color: product.discontinued ? "#b91c1c" : "#166534",
+                    }}
+                  >
                     {product.discontinued ? "終売" : "販売中"}
                   </p>
 
