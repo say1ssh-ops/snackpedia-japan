@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function ProductPage({
@@ -43,22 +42,6 @@ export default async function ProductPage({
         }}
       >
         <Link href="/">← 一覧へ戻る</Link>
-
-        {product.image_url && (
-          <div style={{ marginTop: "20px" }}>
-            <Image
-              src={product.image_url}
-              alt={product.name}
-              width={800}
-              height={500}
-              style={{
-                width: "100%",
-                height: "auto",
-                borderRadius: "16px",
-              }}
-            />
-          </div>
-        )}
 
         <h1
           style={{
@@ -105,10 +88,7 @@ export default async function ProductPage({
           }}
         >
           <h2>商品説明</h2>
-
-          <p>
-            {product.description ?? "説明なし"}
-          </p>
+          <p>{product.description ?? "説明なし"}</p>
         </div>
       </div>
     </main>
