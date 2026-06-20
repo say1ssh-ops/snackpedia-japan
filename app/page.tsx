@@ -24,6 +24,21 @@ function getRelatedName(value: RelatedName) {
   return value.name ?? "-";
 }
 
+function buildQuery(params: {
+  q?: string;
+  maker?: string;
+  category?: string;
+}) {
+  const searchParams = new URLSearchParams();
+
+  if (params.q) searchParams.set("q", params.q);
+  if (params.maker) searchParams.set("maker", params.maker);
+  if (params.category) searchParams.set("category", params.category);
+
+  const query = searchParams.toString();
+  return query ? `/?${query}` : "/";
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -143,7 +158,11 @@ export default async function Home({
               return (
                 <Link
                   key={maker.id}
-                  href={`/?maker=${maker.id}${categoryId ? `&category=${categoryId}` : ""}`}
+                  href={buildQuery({
+                    q,
+                    maker: selected ? "" : String(maker.id),
+                    category: categoryId,
+                  })}
                   style={{
                     display: "block",
                     padding: "10px 12px",
@@ -177,7 +196,11 @@ export default async function Home({
               return (
                 <Link
                   key={category.id}
-                  href={`/?category=${category.id}${makerId ? `&maker=${makerId}` : ""}`}
+                  href={buildQuery({
+                    q,
+                    maker: makerId,
+                    category: selected ? "" : String(category.id),
+                  })}
                   style={{
                     display: "block",
                     padding: "10px 12px",
