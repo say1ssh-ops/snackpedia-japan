@@ -94,63 +94,213 @@ export default async function Home({
   }
 
   const { data: products } = await productQuery;
+  const productCount = products?.length ?? 0;
+
+  const selectedMaker = makers?.find((maker) => makerId === String(maker.id));
+  const selectedCategory = categories?.find(
+    (category) => categoryId === String(category.id)
+  );
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        padding: "40px",
+        padding: "28px",
         fontFamily: "sans-serif",
-        background: "#fff7ed",
+        color: "#111827",
+        background:
+          "radial-gradient(circle at top left, #fde68a 0, transparent 260px), radial-gradient(circle at top right, #fecaca 0, transparent 300px), linear-gradient(135deg, #fff7ed 0%, #fef3c7 46%, #fee2e2 100%)",
       }}
     >
-      <section style={{ maxWidth: "960px", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>
-          🍟 日本スナック図鑑
-        </h1>
-
-        <p style={{ fontSize: "18px", color: "#555" }}>
-          日本のスナック菓子をメーカー別・カテゴリー別に探せる図鑑サイトです。
-        </p>
-
-        <form>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="例：カルビー、ポテトチップス、じゃがりこ"
+      <section style={{ maxWidth: "1120px", margin: "0 auto" }}>
+        <div
+          style={{
+            background: "#ffffff",
+            borderRadius: "34px",
+            padding: "34px",
+            border: "4px solid #fed7aa",
+            boxShadow: "0 18px 40px #00000018",
+            position: "relative",
+            overflow: "hidden",
+            marginBottom: "24px",
+          }}
+        >
+          <div
             style={{
-              width: "100%",
-              padding: "16px",
-              fontSize: "16px",
-              borderRadius: "12px",
-              border: "1px solid #ddd",
-              margin: "28px 0",
+              position: "absolute",
+              top: "-70px",
+              right: "-70px",
+              width: "190px",
+              height: "190px",
+              borderRadius: "999px",
+              background: "#f97316",
+              opacity: 0.16,
             }}
           />
 
-          {makerId && <input type="hidden" name="maker" value={makerId} />}
-          {categoryId && <input type="hidden" name="category" value={categoryId} />}
-        </form>
+          <div
+            style={{
+              display: "inline-block",
+              background: "#ffedd5",
+              color: "#c2410c",
+              padding: "8px 14px",
+              borderRadius: "999px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              border: "2px solid #fdba74",
+              marginBottom: "14px",
+            }}
+          >
+            🍟 Snackpedia Japan
+          </div>
 
-        <div style={{ marginBottom: "20px" }}>
-          <Link href="/">すべて表示</Link>
+          <h1
+            style={{
+              fontSize: "48px",
+              lineHeight: 1.1,
+              margin: "0 0 12px",
+              letterSpacing: "-0.04em",
+              color: "#111827",
+            }}
+          >
+            日本スナック図鑑
+          </h1>
+
+          <p
+            style={{
+              fontSize: "18px",
+              color: "#4b5563",
+              margin: "0 0 24px",
+              lineHeight: 1.8,
+              maxWidth: "720px",
+            }}
+          >
+            日本のスナック菓子を、メーカー・カテゴリー・商品名からサクッと探せるデータベースです。
+          </p>
+
+          <form>
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder="例：カルビー、ポテトチップス、じゃがりこ"
+              style={{
+                width: "100%",
+                padding: "18px 20px",
+                fontSize: "17px",
+                borderRadius: "999px",
+                border: "3px solid #fdba74",
+                background: "#fff7ed",
+                color: "#111827",
+                outline: "none",
+                boxShadow: "0 8px 0 #fed7aa",
+              }}
+            />
+
+            {makerId && <input type="hidden" name="maker" value={makerId} />}
+            {categoryId && (
+              <input type="hidden" name="category" value={categoryId} />
+            )}
+          </form>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              marginTop: "24px",
+              alignItems: "center",
+            }}
+          >
+            <Link
+              href="/"
+              style={{
+                display: "inline-block",
+                padding: "10px 16px",
+                borderRadius: "999px",
+                background: "#111827",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "bold",
+                boxShadow: "0 6px 0 #374151",
+              }}
+            >
+              すべて表示
+            </Link>
+
+            {selectedMaker && (
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "10px 14px",
+                  borderRadius: "999px",
+                  background: "#ecfeff",
+                  color: "#0e7490",
+                  fontWeight: "bold",
+                  border: "2px solid #a5f3fc",
+                }}
+              >
+                🏭 {selectedMaker.name}
+              </span>
+            )}
+
+            {selectedCategory && (
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "10px 14px",
+                  borderRadius: "999px",
+                  background: "#fef9c3",
+                  color: "#854d0e",
+                  fontWeight: "bold",
+                  border: "2px solid #fde68a",
+                }}
+              >
+                🍿 {selectedCategory.name}
+              </span>
+            )}
+
+            <span
+              style={{
+                display: "inline-block",
+                padding: "10px 14px",
+                borderRadius: "999px",
+                background: "#f0fdf4",
+                color: "#166534",
+                fontWeight: "bold",
+                border: "2px solid #bbf7d0",
+              }}
+            >
+              📦 {productCount}件表示中
+            </span>
+          </div>
         </div>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "20px",
+            marginBottom: "24px",
           }}
         >
           <div
             style={{
-              background: "white",
+              background: "#ffffff",
               padding: "24px",
-              borderRadius: "18px",
+              borderRadius: "28px",
+              border: "3px solid #bfdbfe",
+              boxShadow: "0 14px 30px #00000012",
             }}
           >
-            <h2>メーカーから探す</h2>
+            <h2
+              style={{
+                marginTop: 0,
+                marginBottom: "16px",
+                color: "#1e3a8a",
+              }}
+            >
+              🏭 メーカーから探す
+            </h2>
 
             {makers?.map((maker: Maker) => {
               const selected = makerId === String(maker.id);
@@ -165,14 +315,15 @@ export default async function Home({
                   })}
                   style={{
                     display: "block",
-                    padding: "10px 12px",
-                    marginBottom: "6px",
-                    borderRadius: "10px",
-                    border: selected ? "2px solid #f97316" : "1px solid #eee",
-                    background: selected ? "#ffedd5" : "white",
+                    padding: "12px 14px",
+                    marginBottom: "8px",
+                    borderRadius: "16px",
+                    border: selected ? "3px solid #f97316" : "2px solid #dbeafe",
+                    background: selected ? "#ffedd5" : "#eff6ff",
                     fontWeight: selected ? "bold" : "normal",
                     textDecoration: "none",
-                    color: "inherit",
+                    color: selected ? "#c2410c" : "#1e40af",
+                    boxShadow: selected ? "0 5px 0 #fdba74" : "0 4px 0 #bfdbfe",
                   }}
                 >
                   {selected ? "🟠" : "🏭"} {maker.name}
@@ -183,12 +334,22 @@ export default async function Home({
 
           <div
             style={{
-              background: "white",
+              background: "#ffffff",
               padding: "24px",
-              borderRadius: "18px",
+              borderRadius: "28px",
+              border: "3px solid #fde68a",
+              boxShadow: "0 14px 30px #00000012",
             }}
           >
-            <h2>カテゴリーから探す</h2>
+            <h2
+              style={{
+                marginTop: 0,
+                marginBottom: "16px",
+                color: "#854d0e",
+              }}
+            >
+              🍿 カテゴリーから探す
+            </h2>
 
             {categories?.map((category: Category) => {
               const selected = categoryId === String(category.id);
@@ -203,14 +364,15 @@ export default async function Home({
                   })}
                   style={{
                     display: "block",
-                    padding: "10px 12px",
-                    marginBottom: "6px",
-                    borderRadius: "10px",
-                    border: selected ? "2px solid #f97316" : "1px solid #eee",
-                    background: selected ? "#ffedd5" : "white",
+                    padding: "12px 14px",
+                    marginBottom: "8px",
+                    borderRadius: "16px",
+                    border: selected ? "3px solid #f97316" : "2px solid #fde68a",
+                    background: selected ? "#ffedd5" : "#fefce8",
                     fontWeight: selected ? "bold" : "normal",
                     textDecoration: "none",
-                    color: "inherit",
+                    color: selected ? "#c2410c" : "#854d0e",
+                    boxShadow: selected ? "0 5px 0 #fdba74" : "0 4px 0 #fde68a",
                   }}
                 >
                   {selected ? "🟠" : "🍿"} {category.name}
@@ -222,19 +384,52 @@ export default async function Home({
 
         <div
           style={{
-            marginTop: "24px",
-            background: "white",
-            padding: "24px",
-            borderRadius: "18px",
+            background: "#ffffff",
+            padding: "28px",
+            borderRadius: "30px",
+            border: "4px solid #fecaca",
+            boxShadow: "0 18px 40px #00000014",
           }}
         >
-          <h2>商品一覧</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "16px",
+              flexWrap: "wrap",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <h2
+              style={{
+                margin: 0,
+                color: "#991b1b",
+                fontSize: "28px",
+              }}
+            >
+              📚 商品一覧
+            </h2>
+
+            <div
+              style={{
+                background: "#fee2e2",
+                color: "#991b1b",
+                fontWeight: "bold",
+                padding: "8px 14px",
+                borderRadius: "999px",
+                border: "2px solid #fecaca",
+              }}
+            >
+              {productCount} snacks
+            </div>
+          </div>
 
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "14px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              gap: "16px",
             }}
           >
             {(products as Product[] | null)?.map((product) => (
@@ -245,39 +440,99 @@ export default async function Home({
               >
                 <div
                   style={{
-                    border: "1px solid #eee",
-                    borderRadius: "14px",
-                    padding: "16px",
+                    border: "3px solid #fed7aa",
+                    borderRadius: "24px",
+                    padding: "18px",
                     height: "100%",
+                    background:
+                      "linear-gradient(180deg, #ffffff 0%, #fff7ed 100%)",
+                    boxShadow: "0 8px 0 #fed7aa",
                   }}
                 >
                   <div
                     style={{
-                      fontSize: "12px",
-                      color: "#666",
-                      marginBottom: "8px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px",
+                      marginBottom: "12px",
                     }}
                   >
-                    🏭 {getRelatedName(product.makers)} / 🍿{" "}
-                    {getRelatedName(product.categories)}
+                    <span
+                      style={{
+                        display: "inline-block",
+                        fontSize: "12px",
+                        color: "#0e7490",
+                        background: "#ecfeff",
+                        border: "1px solid #a5f3fc",
+                        padding: "5px 8px",
+                        borderRadius: "999px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      🏭 {getRelatedName(product.makers)}
+                    </span>
+
+                    <span
+                      style={{
+                        display: "inline-block",
+                        fontSize: "12px",
+                        color: "#854d0e",
+                        background: "#fef9c3",
+                        border: "1px solid #fde68a",
+                        padding: "5px 8px",
+                        borderRadius: "999px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      🍿 {getRelatedName(product.categories)}
+                    </span>
                   </div>
 
-                  <strong>{product.name}</strong>
+                  <strong
+                    style={{
+                      display: "block",
+                      fontSize: "18px",
+                      lineHeight: 1.5,
+                      color: "#111827",
+                    }}
+                  >
+                    {product.name}
+                  </strong>
 
-                  <p style={{ margin: "8px 0", color: "#666" }}>
-                    発売年：{product.release_year ?? "不明"}
+                  <p
+                    style={{
+                      margin: "10px 0 0",
+                      color: "#6b7280",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    📅 発売年：{product.release_year ?? "不明"}
                   </p>
 
                   <p
                     style={{
-                      margin: "8px 0",
-                      color: product.discontinued ? "#b91c1c" : "#166534",
+                      display: "inline-block",
+                      margin: "10px 0 0",
+                      padding: "6px 10px",
+                      borderRadius: "999px",
+                      color: product.discontinued ? "#991b1b" : "#166534",
+                      background: product.discontinued ? "#fee2e2" : "#dcfce7",
+                      fontWeight: "bold",
+                      fontSize: "13px",
                     }}
                   >
-                    {product.discontinued ? "終売" : "販売中"}
+                    {product.discontinued ? "🔴 終売" : "🟢 販売中"}
                   </p>
 
-                  <p style={{ color: "#555" }}>{product.description}</p>
+                  <p
+                    style={{
+                      color: "#4b5563",
+                      lineHeight: 1.7,
+                      marginBottom: 0,
+                    }}
+                  >
+                    {product.description}
+                  </p>
                 </div>
               </Link>
             ))}
