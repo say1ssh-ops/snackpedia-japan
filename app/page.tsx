@@ -18,6 +18,68 @@ type Product = {
   categories: RelatedName;
 };
 
+type FloatingSnack = {
+  emoji: string;
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+  rotate: string;
+  size: number;
+  background: string;
+};
+
+const floatingSnacks: FloatingSnack[] = [
+  {
+    emoji: "🍟",
+    top: "80px",
+    left: "28px",
+    rotate: "-14deg",
+    size: 30,
+    background: "#ffedd5",
+  },
+  {
+    emoji: "🍿",
+    top: "190px",
+    right: "38px",
+    rotate: "12deg",
+    size: 32,
+    background: "#fef9c3",
+  },
+  {
+    emoji: "🥨",
+    top: "420px",
+    left: "18px",
+    rotate: "18deg",
+    size: 28,
+    background: "#ecfeff",
+  },
+  {
+    emoji: "🧀",
+    top: "580px",
+    right: "24px",
+    rotate: "-10deg",
+    size: 30,
+    background: "#fef3c7",
+  },
+  {
+    emoji: "🍘",
+    bottom: "180px",
+    left: "34px",
+    rotate: "10deg",
+    size: 28,
+    background: "#fee2e2",
+  },
+  {
+    emoji: "🥔",
+    bottom: "80px",
+    right: "44px",
+    rotate: "-18deg",
+    size: 31,
+    background: "#dcfce7",
+  },
+];
+
 function getRelatedName(value: RelatedName) {
   if (!value) return "-";
   if (Array.isArray(value)) return value[0]?.name ?? "-";
@@ -37,6 +99,36 @@ function buildQuery(params: {
 
   const query = searchParams.toString();
   return query ? `/?${query}` : "/";
+}
+
+function FloatingSnackIcon({ snack }: { snack: FloatingSnack }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: snack.top,
+        left: snack.left,
+        right: snack.right,
+        bottom: snack.bottom,
+        width: "64px",
+        height: "64px",
+        borderRadius: "22px",
+        background: snack.background,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: `${snack.size}px`,
+        transform: `rotate(${snack.rotate})`,
+        boxShadow: "0 10px 0 #00000010",
+        border: "3px solid #ffffff",
+        opacity: 0.88,
+        zIndex: 0,
+        pointerEvents: "none",
+      }}
+    >
+      {snack.emoji}
+    </div>
+  );
 }
 
 export default async function Home({
@@ -109,10 +201,23 @@ export default async function Home({
         fontFamily: "sans-serif",
         color: "#111827",
         background:
-          "radial-gradient(circle at top left, #fde68a 0, transparent 260px), radial-gradient(circle at top right, #fecaca 0, transparent 300px), linear-gradient(135deg, #fff7ed 0%, #fef3c7 46%, #fee2e2 100%)",
+          "radial-gradient(circle at 10% 10%, #fde68a 0, transparent 260px), radial-gradient(circle at 90% 8%, #fecaca 0, transparent 300px), radial-gradient(circle at 50% 100%, #bae6fd 0, transparent 360px), linear-gradient(135deg, #fff7ed 0%, #fef3c7 46%, #fee2e2 100%)",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <section style={{ maxWidth: "1120px", margin: "0 auto" }}>
+      {floatingSnacks.map((snack, index) => (
+        <FloatingSnackIcon key={index} snack={snack} />
+      ))}
+
+      <section
+        style={{
+          maxWidth: "1120px",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
         <div
           style={{
             background: "#ffffff",
@@ -137,6 +242,22 @@ export default async function Home({
               opacity: 0.16,
             }}
           />
+
+          <div
+            style={{
+              position: "absolute",
+              right: "28px",
+              top: "26px",
+              display: "flex",
+              gap: "8px",
+              transform: "rotate(8deg)",
+              opacity: 0.95,
+            }}
+          >
+            <span style={{ fontSize: "34px" }}>🍿</span>
+            <span style={{ fontSize: "40px" }}>🍟</span>
+            <span style={{ fontSize: "32px" }}>🥨</span>
+          </div>
 
           <div
             style={{
@@ -447,8 +568,40 @@ export default async function Home({
                     background:
                       "linear-gradient(180deg, #ffffff 0%, #fff7ed 100%)",
                     boxShadow: "0 8px 0 #fed7aa",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
                 >
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: "-18px",
+                      top: "-18px",
+                      width: "70px",
+                      height: "70px",
+                      borderRadius: "999px",
+                      background: "#f97316",
+                      opacity: 0.1,
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      width: "42px",
+                      height: "42px",
+                      borderRadius: "16px",
+                      background: "#ffedd5",
+                      border: "2px solid #fdba74",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "22px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    🍘
+                  </div>
+
                   <div
                     style={{
                       display: "flex",
