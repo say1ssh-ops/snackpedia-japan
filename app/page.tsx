@@ -86,6 +86,69 @@ function getRelatedName(value: RelatedName) {
   return value.name ?? "-";
 }
 
+function getCategoryEmoji(value: RelatedName) {
+  const categoryName = getRelatedName(value);
+
+  if (
+    categoryName.includes("ポテト") ||
+    categoryName.includes("チップ") ||
+    categoryName.includes("じゃが")
+  ) {
+    return "🥔";
+  }
+
+  if (categoryName.includes("ポップコーン")) {
+    return "🍿";
+  }
+
+  if (
+    categoryName.includes("米菓") ||
+    categoryName.includes("せんべい") ||
+    categoryName.includes("煎餅")
+  ) {
+    return "🍘";
+  }
+
+  if (categoryName.includes("チョコ")) {
+    return "🍫";
+  }
+
+  if (
+    categoryName.includes("クッキー") ||
+    categoryName.includes("ビスケット")
+  ) {
+    return "🍪";
+  }
+
+  if (
+    categoryName.includes("キャンディ") ||
+    categoryName.includes("グミ") ||
+    categoryName.includes("飴")
+  ) {
+    return "🍬";
+  }
+
+  if (
+    categoryName.includes("ナッツ") ||
+    categoryName.includes("豆")
+  ) {
+    return "🥜";
+  }
+
+  if (categoryName.includes("チーズ")) {
+    return "🧀";
+  }
+
+  if (
+    categoryName.includes("プレッツェル") ||
+    categoryName.includes("クラッカー")
+  ) {
+    return "🥨";
+  }
+
+  return "🍟";
+}
+
 function buildQuery(params: {
   q?: string;
   maker?: string;
@@ -376,7 +439,8 @@ export default async function Home({
                   border: "2px solid #fde68a",
                 }}
               >
-                🍿 {selectedCategory.name}
+                {getCategoryEmoji({ name: selectedCategory.name })}{" "}
+                {selectedCategory.name}
               </span>
             )}
 
@@ -474,6 +538,7 @@ export default async function Home({
 
             {categories?.map((category: Category) => {
               const selected = categoryId === String(category.id);
+              const categoryEmoji = getCategoryEmoji({ name: category.name });
 
               return (
                 <Link
@@ -496,7 +561,7 @@ export default async function Home({
                     boxShadow: selected ? "0 5px 0 #fdba74" : "0 4px 0 #fde68a",
                   }}
                 >
-                  {selected ? "🟠" : "🍿"} {category.name}
+                  {selected ? "🟠" : categoryEmoji} {category.name}
                 </Link>
               );
             })}
@@ -553,142 +618,146 @@ export default async function Home({
               gap: "16px",
             }}
           >
-            {(products as Product[] | null)?.map((product) => (
-              <Link
-                key={product.id}
-                href={`/products/${product.id}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div
-                  style={{
-                    border: "3px solid #fed7aa",
-                    borderRadius: "24px",
-                    padding: "18px",
-                    height: "100%",
-                    background:
-                      "linear-gradient(180deg, #ffffff 0%, #fff7ed 100%)",
-                    boxShadow: "0 8px 0 #fed7aa",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
+            {(products as Product[] | null)?.map((product) => {
+              const categoryEmoji = getCategoryEmoji(product.categories);
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`/products/${product.id}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <div
                     style={{
-                      position: "absolute",
-                      right: "-18px",
-                      top: "-18px",
-                      width: "70px",
-                      height: "70px",
-                      borderRadius: "999px",
-                      background: "#f97316",
-                      opacity: 0.1,
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      display: "inline-flex",
-                      width: "42px",
-                      height: "42px",
-                      borderRadius: "16px",
-                      background: "#ffedd5",
-                      border: "2px solid #fdba74",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "22px",
-                      marginBottom: "12px",
+                      border: "3px solid #fed7aa",
+                      borderRadius: "24px",
+                      padding: "18px",
+                      height: "100%",
+                      background:
+                        "linear-gradient(180deg, #ffffff 0%, #fff7ed 100%)",
+                      boxShadow: "0 8px 0 #fed7aa",
+                      position: "relative",
+                      overflow: "hidden",
                     }}
                   >
-                    🍘
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "6px",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <span
+                    <div
                       style={{
-                        display: "inline-block",
-                        fontSize: "12px",
-                        color: "#0e7490",
-                        background: "#ecfeff",
-                        border: "1px solid #a5f3fc",
-                        padding: "5px 8px",
+                        position: "absolute",
+                        right: "-18px",
+                        top: "-18px",
+                        width: "70px",
+                        height: "70px",
                         borderRadius: "999px",
+                        background: "#f97316",
+                        opacity: 0.1,
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "16px",
+                        background: "#ffedd5",
+                        border: "2px solid #fdba74",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "22px",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      {categoryEmoji}
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "6px",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "inline-block",
+                          fontSize: "12px",
+                          color: "#0e7490",
+                          background: "#ecfeff",
+                          border: "1px solid #a5f3fc",
+                          padding: "5px 8px",
+                          borderRadius: "999px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        🏭 {getRelatedName(product.makers)}
+                      </span>
+
+                      <span
+                        style={{
+                          display: "inline-block",
+                          fontSize: "12px",
+                          color: "#854d0e",
+                          background: "#fef9c3",
+                          border: "1px solid #fde68a",
+                          padding: "5px 8px",
+                          borderRadius: "999px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {categoryEmoji} {getRelatedName(product.categories)}
+                      </span>
+                    </div>
+
+                    <strong
+                      style={{
+                        display: "block",
+                        fontSize: "18px",
+                        lineHeight: 1.5,
+                        color: "#111827",
+                      }}
+                    >
+                      {product.name}
+                    </strong>
+
+                    <p
+                      style={{
+                        margin: "10px 0 0",
+                        color: "#6b7280",
                         fontWeight: "bold",
                       }}
                     >
-                      🏭 {getRelatedName(product.makers)}
-                    </span>
+                      📅 発売年：{product.release_year ?? "不明"}
+                    </p>
 
-                    <span
+                    <p
                       style={{
                         display: "inline-block",
-                        fontSize: "12px",
-                        color: "#854d0e",
-                        background: "#fef9c3",
-                        border: "1px solid #fde68a",
-                        padding: "5px 8px",
+                        margin: "10px 0 0",
+                        padding: "6px 10px",
                         borderRadius: "999px",
+                        color: product.discontinued ? "#991b1b" : "#166534",
+                        background: product.discontinued ? "#fee2e2" : "#dcfce7",
                         fontWeight: "bold",
+                        fontSize: "13px",
                       }}
                     >
-                      🍿 {getRelatedName(product.categories)}
-                    </span>
+                      {product.discontinued ? "🔴 終売" : "🟢 販売中"}
+                    </p>
+
+                    <p
+                      style={{
+                        color: "#4b5563",
+                        lineHeight: 1.7,
+                        marginBottom: 0,
+                      }}
+                    >
+                      {product.description}
+                    </p>
                   </div>
-
-                  <strong
-                    style={{
-                      display: "block",
-                      fontSize: "18px",
-                      lineHeight: 1.5,
-                      color: "#111827",
-                    }}
-                  >
-                    {product.name}
-                  </strong>
-
-                  <p
-                    style={{
-                      margin: "10px 0 0",
-                      color: "#6b7280",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    📅 発売年：{product.release_year ?? "不明"}
-                  </p>
-
-                  <p
-                    style={{
-                      display: "inline-block",
-                      margin: "10px 0 0",
-                      padding: "6px 10px",
-                      borderRadius: "999px",
-                      color: product.discontinued ? "#991b1b" : "#166534",
-                      background: product.discontinued ? "#fee2e2" : "#dcfce7",
-                      fontWeight: "bold",
-                      fontSize: "13px",
-                    }}
-                  >
-                    {product.discontinued ? "🔴 終売" : "🟢 販売中"}
-                  </p>
-
-                  <p
-                    style={{
-                      color: "#4b5563",
-                      lineHeight: 1.7,
-                      marginBottom: 0,
-                    }}
-                  >
-                    {product.description}
-                  </p>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
